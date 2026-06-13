@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1083549900050",
+    "project_id": "fir-fc581",
+    "storage_bucket": "fir-fc581.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1083549900050:android:42cb80a13496de30b4e7cb",
+        "android_client_info": {
+          "package_name": "com.indevconsultancy.trikal_up"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1083549900050-j88kfi5s7gtdekbrk2tfsedc34tfitdg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6VqY6hOSdrl98EJ3vSm3CLxYsZQ0VIhc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1083549900050-4rdn2dv9plk3rstlv63516vs0iec8b9u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
