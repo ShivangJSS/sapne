@@ -161,13 +161,20 @@ class AspirationController extends GetxController{
 
     }
 
+<<<<<<< HEAD
     print("selectedChlnCategories = $selectedChlnCategories");
     print("selectedChlnCategory = ${selectedChlnCategory.value}");
 
+=======
+>>>>>>> 6ef43605bc1245d9d61babac82608f0fddd51d1b
     loadSubCategories();
 
     update();
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6ef43605bc1245d9d61babac82608f0fddd51d1b
   void toggleCard(String feedbackId) {
     if (expandedFeedbackIds.contains(feedbackId)) {
       expandedFeedbackIds.clear(); // agar wahi open hai to sab band
