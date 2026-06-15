@@ -815,6 +815,11 @@ class _RemarkState extends State<Remark> {
                                                                         cat.challenges_cat_name ?? "",
 
                                                                       ),
+                                                                      enabled:
+
+                                                                      !(rmkcontroller.selectedChlnCategories.contains("7")) ||
+
+                                                                          cat.challenges_cat_code == "7",
 
                                                                       onChanged: (value){
 
@@ -1094,6 +1099,8 @@ class _RemarkState extends State<Remark> {
                                                                                 ?? "",
 
                                                                           ),
+
+
 
                                                                           onChanged: (value) {
 
