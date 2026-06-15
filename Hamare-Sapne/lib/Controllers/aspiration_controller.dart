@@ -106,6 +106,7 @@ class AspirationController extends GetxController{
     "6": "38",
 
   };
+<<<<<<< HEAD
   bool isOtherSelectedForCategory(String catId) {
 
     String? otherCode = otherSubCodes[catId];
@@ -115,6 +116,8 @@ class AspirationController extends GetxController{
     return selectedChlnSubCategories.contains(otherCode);
 
   }
+=======
+>>>>>>> 20d23be36aa7c609886f140cc7a4955601303935
 
   RxString selected_waychln_ctgry = ''.obs;
   RxString selected_way_sbctgry = ''.obs;
@@ -1097,6 +1100,7 @@ WHERE f.aspiration_id IS NULL''';
       bool checked,
       ) {
 
+<<<<<<< HEAD
     // Find category of clicked subcategory
 
     final clickedSub = allChlnSubCategories.firstWhere(
@@ -1112,6 +1116,26 @@ WHERE f.aspiration_id IS NULL''';
     if (checked) {
 
       // User clicked Other of THIS category
+=======
+    // Other subcategories
+    List<String> otherSubs = [
+      "6",
+      "11",
+      "19",
+      "25",
+      "33",
+      "38",
+    ];
+
+    if (checked) {
+
+      // If user selected an Other option
+      if (otherSubs.contains(code)) {
+
+        selectedChlnSubCategories.removeWhere(
+              (e) => e != code,
+        );
+>>>>>>> 20d23be36aa7c609886f140cc7a4955601303935
 
       if (code == otherCode) {
 
@@ -1170,6 +1194,32 @@ WHERE f.aspiration_id IS NULL''';
         !selectedChlnSubCategories.contains(code)
 
         ) {
+
+          selectedChlnSubCategories.add(code);
+
+        }
+
+      }
+
+      else {
+
+        // If any Other is already selected, do nothing
+
+        if (
+
+        selectedChlnSubCategories.any(
+
+              (e) => otherSubs.contains(e),
+
+        )
+
+        ) {
+
+          return;
+
+        }
+
+        if (!selectedChlnSubCategories.contains(code)) {
 
           selectedChlnSubCategories.add(code);
 

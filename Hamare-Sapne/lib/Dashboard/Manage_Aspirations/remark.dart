@@ -1091,6 +1091,7 @@ class _RemarkState extends State<Remark> {
                                                                             sub.challenges_sub_cat_name ?? "",
                                                                           ),
 
+<<<<<<< HEAD
                                                                           enabled:
 
                                                                           !rmkcontroller.isOtherSelectedForCategory(
@@ -1106,6 +1107,9 @@ class _RemarkState extends State<Remark> {
                                                                                   sub.challenges_sub_cat_code
 
                                                                               ),
+=======
+
+>>>>>>> 20d23be36aa7c609886f140cc7a4955601303935
 
                                                                           onChanged: (value) {
 
