@@ -815,6 +815,11 @@ class _RemarkState extends State<Remark> {
                                                                         cat.challenges_cat_name ?? "",
 
                                                                       ),
+                                                                      enabled:
+
+                                                                      !(rmkcontroller.selectedChlnCategories.contains("7")) ||
+
+                                                                          cat.challenges_cat_code == "7",
 
                                                                       onChanged: (value){
 
@@ -1072,38 +1077,41 @@ class _RemarkState extends State<Remark> {
                                                                           dense: true,
 
                                                                           controlAffinity:
-
                                                                           ListTileControlAffinity.leading,
 
                                                                           value:
 
                                                                           rmkcontroller
-
                                                                               .selectedChlnSubCategories
-
                                                                               .contains(
-
                                                                             sub.challenges_sub_cat_code,
-
                                                                           ),
 
                                                                           title: Text(
-
-                                                                            sub.challenges_sub_cat_name
-
-                                                                                ?? "",
-
+                                                                            sub.challenges_sub_cat_name ?? "",
                                                                           ),
+
+                                                                          enabled:
+
+                                                                          !rmkcontroller.isOtherSelectedForCategory(
+
+                                                                              sub.challenges_cat_id ?? ""
+
+                                                                          )
+
+                                                                              ||
+
+                                                                              rmkcontroller.selectedChlnSubCategories.contains(
+
+                                                                                  sub.challenges_sub_cat_code
+
+                                                                              ),
 
                                                                           onChanged: (value) {
 
-                                                                            rmkcontroller
+                                                                            rmkcontroller.onSubchlnChanged(
 
-                                                                                .onSubchlnChanged(
-
-                                                                              sub.challenges_sub_cat_code
-
-                                                                                  ?? "",
+                                                                              sub.challenges_sub_cat_code ?? "",
 
                                                                               value ?? false,
 
@@ -1115,7 +1123,162 @@ class _RemarkState extends State<Remark> {
 
                                                                       },
 
+                                                                    ),
+
+                                                                    if (
+
+                                                                    rmkcontroller.otherSubCodes[catCode] != null
+
+                                                                        &&
+
+                                                                        rmkcontroller.selectedChlnSubCategories.contains(
+
+                                                                            rmkcontroller.otherSubCodes[catCode]
+
+                                                                        )
+
                                                                     )
+
+                                                                      Padding(
+
+                                                                        padding: const EdgeInsets.only(
+
+                                                                          left: 16,
+
+                                                                          right: 16,
+
+                                                                          bottom: 12,
+
+                                                                        ),
+
+                                                                        child: Column(
+
+                                                                          crossAxisAlignment: CrossAxisAlignment.start,
+
+                                                                          children: [
+
+                                                                            Row(
+
+                                                                              children: [
+
+                                                                                Text(
+
+                                                                                  "Other_reason".tr,
+
+                                                                                  style: const TextStyle(
+
+                                                                                    fontSize: 16,
+
+                                                                                    fontWeight: FontWeight.w500,
+
+                                                                                  ),
+
+                                                                                ),
+
+                                                                                const SizedBox(width: 4),
+
+                                                                                const Text(
+
+                                                                                  "*",
+
+                                                                                  style: TextStyle(
+
+                                                                                    color: Colors.red,
+
+                                                                                    fontSize: 16,
+
+                                                                                  ),
+
+                                                                                ),
+
+                                                                              ],
+
+                                                                            ),
+
+                                                                            const SizedBox(height: 8),
+
+                                                                            TextField(
+
+                                                                              controller:
+
+                                                                              catCode == "1"
+                                                                                  ? rmkcontroller.C_OtherReason_Sub6
+
+                                                                                  : catCode == "2"
+                                                                                  ? rmkcontroller.C_OtherReason_Sub11
+
+                                                                                  : catCode == "3"
+                                                                                  ? rmkcontroller.C_OtherReason_Sub19
+
+                                                                                  : catCode == "4"
+                                                                                  ? rmkcontroller.C_OtherReason_Sub25
+
+                                                                                  : catCode == "5"
+                                                                                  ? rmkcontroller.C_OtherReason_Sub33
+
+                                                                                  : rmkcontroller.C_OtherReason_Sub38,
+
+                                                                              minLines: 2,
+
+                                                                              maxLines: 5,
+
+                                                                              decoration: InputDecoration(
+
+                                                                                hintText: "Enter Other Reason",
+
+                                                                                border: OutlineInputBorder(
+
+                                                                                  borderRadius: BorderRadius.circular(14),
+
+                                                                                  borderSide: const BorderSide(
+
+                                                                                    color: BrandColors.apporangeColor,
+
+                                                                                  ),
+
+                                                                                ),
+
+                                                                                enabledBorder: OutlineInputBorder(
+
+                                                                                  borderRadius: BorderRadius.circular(14),
+
+                                                                                  borderSide: const BorderSide(
+
+                                                                                    color: BrandColors.apporangeColor,
+
+                                                                                  ),
+
+                                                                                ),
+
+                                                                                focusedBorder: OutlineInputBorder(
+
+                                                                                  borderRadius: BorderRadius.circular(14),
+
+                                                                                  borderSide: const BorderSide(
+
+                                                                                    color: BrandColors.apporangeColor,
+
+                                                                                    width: 1.5,
+
+                                                                                  ),
+
+                                                                                ),
+
+                                                                              ),
+
+                                                                            ),
+
+                                                                          ],
+
+                                                                        ),
+
+                                                                      ),
+
+
+
+
+
+
 
                                                                   ],
 
@@ -1131,404 +1294,446 @@ class _RemarkState extends State<Remark> {
 
                                                   const SizedBox(height: 15),
 
-                                                  Obx(() {
-                                                    if (rmkcontroller.selectedChlnCategory.value == "1" &&
-                                                        rmkcontroller.selectedChlnSubCategory.value == "6") {
-                                                      return Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Padding(
-                                                            padding: EdgeInsets.only(bottom: 6, left: 4),
-                                                            child: Row(
-                                                              children: [
-                                                                Text(
-                                                                  "Other_reason".tr,
-                                                                  style: TextStyle(
-                                                                    fontSize: 16,
-                                                                    fontWeight: FontWeight.w500,
-                                                                    color: Colors.black87,
-                                                                  ),
-                                                                ),
-                                                                SizedBox(width: 4),
-                                                                Text(
-                                                                  "*",
-                                                                  style: TextStyle(
-                                                                    color: Colors.red,
-                                                                    fontSize: 16,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            )
-                                                          ),
-
-                                                          TextField(
-                                                            controller: rmkcontroller.C_OtherReason,
-                                                            minLines: 2,
-                                                            maxLines: 5,
-                                                            decoration: InputDecoration(
-                                                              hintText: "Enter Other Reason",
-                                                              border: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1.5,
-                                                                ),
-                                                              ),
-                                                              enabledBorder: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1,
-                                                                ),
-                                                              ),
-                                                              focusedBorder: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1.5,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    }
-
-                                                    return SizedBox();
-                                                  }),
-
-
-                                                  Obx(() {
-                                                    if (rmkcontroller.selectedChlnCategory.value == "2" &&
-                                                        rmkcontroller.selectedChlnSubCategory.value == "11") {
-                                                      return Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Padding(
-                                                            padding: EdgeInsets.only(bottom: 6, left: 4),
-                                                            child: Row(
-                                                              children: [
-                                                                Text(
-                                                                  "Other_reason".tr,
-                                                                  style: TextStyle(
-                                                                    fontSize: 16,
-                                                                    fontWeight: FontWeight.w500,
-                                                                    color: Colors.black87,
-                                                                  ),
-                                                                ),
-                                                                SizedBox(width: 4),
-                                                                Text(
-                                                                  "*",
-                                                                  style: TextStyle(
-                                                                    color: Colors.red,
-                                                                    fontSize: 16,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-
-                                                          TextField(
-                                                            controller: rmkcontroller.C_OtherReason,
-                                                            minLines: 2,
-                                                            maxLines: 5,
-                                                            decoration: InputDecoration(
-                                                              hintText: "Enter Other Reason",
-                                                              border: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1.5,
-                                                                ),
-                                                              ),
-                                                              enabledBorder: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1,
-                                                                ),
-                                                              ),
-                                                              focusedBorder: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1.5,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    }
-
-                                                    return SizedBox();
-                                                  }),
+                                                  // Obx(() {
+                                                  //   if (
+                                                  //
+                                                  //   rmkcontroller.selectedChlnCategories.contains("1")
+                                                  //
+                                                  //       &&
+                                                  //
+                                                  //       rmkcontroller.selectedChlnSubCategories.contains("6")
+                                                  //
+                                                  //   ) {
+                                                  //     return Column(
+                                                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                                                  //       children: [
+                                                  //         Padding(
+                                                  //           padding: EdgeInsets.only(bottom: 6, left: 4),
+                                                  //           child: Row(
+                                                  //             children: [
+                                                  //               Text(
+                                                  //                 "Other_reason".tr,
+                                                  //                 style: TextStyle(
+                                                  //                   fontSize: 16,
+                                                  //                   fontWeight: FontWeight.w500,
+                                                  //                   color: Colors.black87,
+                                                  //                 ),
+                                                  //               ),
+                                                  //               SizedBox(width: 4),
+                                                  //               Text(
+                                                  //                 "*",
+                                                  //                 style: TextStyle(
+                                                  //                   color: Colors.red,
+                                                  //                   fontSize: 16,
+                                                  //                 ),
+                                                  //               ),
+                                                  //             ],
+                                                  //           )
+                                                  //         ),
+                                                  //
+                                                  //         TextField(
+                                                  //           controller: rmkcontroller.C_OtherReason,
+                                                  //           minLines: 2,
+                                                  //           maxLines: 5,
+                                                  //           decoration: InputDecoration(
+                                                  //             hintText: "Enter Other Reason",
+                                                  //             border: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1.5,
+                                                  //               ),
+                                                  //             ),
+                                                  //             enabledBorder: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1,
+                                                  //               ),
+                                                  //             ),
+                                                  //             focusedBorder: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1.5,
+                                                  //               ),
+                                                  //             ),
+                                                  //           ),
+                                                  //         ),
+                                                  //       ],
+                                                  //     );
+                                                  //   }
+                                                  //
+                                                  //   return SizedBox();
+                                                  // }),
 
 
+                                                  // Obx(() {
+                                                  //   if (
+                                                  //
+                                                  //   rmkcontroller.selectedChlnCategories.contains("2")
+                                                  //
+                                                  //       &&
+                                                  //
+                                                  //       rmkcontroller.selectedChlnSubCategories.contains("11")
+                                                  //
+                                                  //   ) {
+                                                  //     return Column(
+                                                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                                                  //       children: [
+                                                  //         Padding(
+                                                  //           padding: EdgeInsets.only(bottom: 6, left: 4),
+                                                  //           child: Row(
+                                                  //             children: [
+                                                  //               Text(
+                                                  //                 "Other_reason".tr,
+                                                  //                 style: TextStyle(
+                                                  //                   fontSize: 16,
+                                                  //                   fontWeight: FontWeight.w500,
+                                                  //                   color: Colors.black87,
+                                                  //                 ),
+                                                  //               ),
+                                                  //               SizedBox(width: 4),
+                                                  //               Text(
+                                                  //                 "*",
+                                                  //                 style: TextStyle(
+                                                  //                   color: Colors.red,
+                                                  //                   fontSize: 16,
+                                                  //                 ),
+                                                  //               ),
+                                                  //             ],
+                                                  //           ),
+                                                  //         ),
+                                                  //
+                                                  //         TextField(
+                                                  //           controller: rmkcontroller.C_OtherReason,
+                                                  //           minLines: 2,
+                                                  //           maxLines: 5,
+                                                  //           decoration: InputDecoration(
+                                                  //             hintText: "Enter Other Reason",
+                                                  //             border: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1.5,
+                                                  //               ),
+                                                  //             ),
+                                                  //             enabledBorder: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1,
+                                                  //               ),
+                                                  //             ),
+                                                  //             focusedBorder: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1.5,
+                                                  //               ),
+                                                  //             ),
+                                                  //           ),
+                                                  //         ),
+                                                  //       ],
+                                                  //     );
+                                                  //   }
+                                                  //
+                                                  //   return SizedBox();
+                                                  // }),
 
 
-                                                  Obx(() {
-                                                    if (rmkcontroller.selectedChlnCategory.value == "3" &&
-                                                        rmkcontroller.selectedChlnSubCategory.value == "19") {
-                                                      return Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Padding(
-                                                            padding: EdgeInsets.only(bottom: 6, left: 4),
-                                                            child: Row(
-                                                              children: [
-                                                                Text(
-                                                                  "Other_reason".tr,
-                                                                  style: TextStyle(
-                                                                    fontSize: 16,
-                                                                    fontWeight: FontWeight.w500,
-                                                                    color: Colors.black87,
-                                                                  ),
-                                                                ),
-                                                                SizedBox(width: 4),
-                                                                Text(
-                                                                  "*",
-                                                                  style: TextStyle(
-                                                                    color: Colors.red,
-                                                                    fontSize: 16,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
 
-                                                          TextField(
-                                                            controller: rmkcontroller.C_OtherReason,
-                                                            minLines: 2,
-                                                            maxLines: 5,
-                                                            decoration: InputDecoration(
-                                                              hintText: "Enter Other Reason",
-                                                              border: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1.5,
-                                                                ),
-                                                              ),
-                                                              enabledBorder: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1,
-                                                                ),
-                                                              ),
-                                                              focusedBorder: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1.5,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    }
+                                                  //
+                                                  // Obx(() {
+                                                  //   if (
+                                                  //
+                                                  //   rmkcontroller.selectedChlnCategories.contains("3")
+                                                  //
+                                                  //       &&
+                                                  //
+                                                  //       rmkcontroller.selectedChlnSubCategories.contains("19")
+                                                  //
+                                                  //   ){
+                                                  //     return Column(
+                                                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                                                  //       children: [
+                                                  //         Padding(
+                                                  //           padding: EdgeInsets.only(bottom: 6, left: 4),
+                                                  //           child: Row(
+                                                  //             children: [
+                                                  //               Text(
+                                                  //                 "Other_reason".tr,
+                                                  //                 style: TextStyle(
+                                                  //                   fontSize: 16,
+                                                  //                   fontWeight: FontWeight.w500,
+                                                  //                   color: Colors.black87,
+                                                  //                 ),
+                                                  //               ),
+                                                  //               SizedBox(width: 4),
+                                                  //               Text(
+                                                  //                 "*",
+                                                  //                 style: TextStyle(
+                                                  //                   color: Colors.red,
+                                                  //                   fontSize: 16,
+                                                  //                 ),
+                                                  //               ),
+                                                  //             ],
+                                                  //           ),
+                                                  //         ),
+                                                  //
+                                                  //         TextField(
+                                                  //           controller: rmkcontroller.C_OtherReason,
+                                                  //           minLines: 2,
+                                                  //           maxLines: 5,
+                                                  //           decoration: InputDecoration(
+                                                  //             hintText: "Enter Other Reason",
+                                                  //             border: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1.5,
+                                                  //               ),
+                                                  //             ),
+                                                  //             enabledBorder: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1,
+                                                  //               ),
+                                                  //             ),
+                                                  //             focusedBorder: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1.5,
+                                                  //               ),
+                                                  //             ),
+                                                  //           ),
+                                                  //         ),
+                                                  //       ],
+                                                  //     );
+                                                  //   }
+                                                  //
+                                                  //   return SizedBox();
+                                                  // }),
 
-                                                    return SizedBox();
-                                                  }),
+                                                  // Obx(() {
+                                                  //   if (
+                                                  //
+                                                  //   rmkcontroller.selectedChlnCategories.contains("4")
+                                                  //
+                                                  //       &&
+                                                  //
+                                                  //       rmkcontroller.selectedChlnSubCategories.contains("25")
+                                                  //
+                                                  //   ) {
+                                                  //     return Column(
+                                                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                                                  //       children: [
+                                                  //         Padding(
+                                                  //           padding: EdgeInsets.only(bottom: 6, left: 4),
+                                                  //           child: Row(
+                                                  //             children: [
+                                                  //               Text(
+                                                  //                 "Other_reason".tr,
+                                                  //                 style: TextStyle(
+                                                  //                   fontSize: 16,
+                                                  //                   fontWeight: FontWeight.w500,
+                                                  //                   color: Colors.black87,
+                                                  //                 ),
+                                                  //               ),
+                                                  //               SizedBox(width: 4),
+                                                  //               Text(
+                                                  //                 "*",
+                                                  //                 style: TextStyle(
+                                                  //                   color: Colors.red,
+                                                  //                   fontSize: 16,
+                                                  //                 ),
+                                                  //               ),
+                                                  //             ],
+                                                  //           ),
+                                                  //         ),
+                                                  //
+                                                  //         TextField(
+                                                  //           controller: rmkcontroller.C_OtherReason,
+                                                  //           minLines: 2,
+                                                  //           maxLines: 5,
+                                                  //           decoration: InputDecoration(
+                                                  //             hintText: "Enter Other Reason",
+                                                  //             border: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1.5,
+                                                  //               ),
+                                                  //             ),
+                                                  //             enabledBorder: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1,
+                                                  //               ),
+                                                  //             ),
+                                                  //             focusedBorder: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1.5,
+                                                  //               ),
+                                                  //             ),
+                                                  //           ),
+                                                  //         ),
+                                                  //       ],
+                                                  //     );
+                                                  //   }
+                                                  //
+                                                  //   return SizedBox();
+                                                  // }),
 
-                                                  Obx(() {
-                                                    if (rmkcontroller.selectedChlnCategory.value == "4" &&
-                                                        rmkcontroller.selectedChlnSubCategory.value == "25") {
-                                                      return Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Padding(
-                                                            padding: EdgeInsets.only(bottom: 6, left: 4),
-                                                            child: Row(
-                                                              children: [
-                                                                Text(
-                                                                  "Other_reason".tr,
-                                                                  style: TextStyle(
-                                                                    fontSize: 16,
-                                                                    fontWeight: FontWeight.w500,
-                                                                    color: Colors.black87,
-                                                                  ),
-                                                                ),
-                                                                SizedBox(width: 4),
-                                                                Text(
-                                                                  "*",
-                                                                  style: TextStyle(
-                                                                    color: Colors.red,
-                                                                    fontSize: 16,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-
-                                                          TextField(
-                                                            controller: rmkcontroller.C_OtherReason,
-                                                            minLines: 2,
-                                                            maxLines: 5,
-                                                            decoration: InputDecoration(
-                                                              hintText: "Enter Other Reason",
-                                                              border: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1.5,
-                                                                ),
-                                                              ),
-                                                              enabledBorder: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1,
-                                                                ),
-                                                              ),
-                                                              focusedBorder: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1.5,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    }
-
-                                                    return SizedBox();
-                                                  }),
-
-                                                  Obx(() {
-                                                    if (rmkcontroller.selectedChlnCategory.value == "5" &&
-                                                        rmkcontroller.selectedChlnSubCategory.value == "33") {
-                                                      return Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Padding(
-                                                            padding: EdgeInsets.only(bottom: 6, left: 4),
-                                                            child: Row(
-                                                              children: [
-                                                                Text(
-                                                                  "Other_reason".tr,
-                                                                  style: TextStyle(
-                                                                    fontSize: 16,
-                                                                    fontWeight: FontWeight.w500,
-                                                                    color: Colors.black87,
-                                                                  ),
-                                                                ),
-                                                                SizedBox(width: 4),
-                                                                Text(
-                                                                  "*",
-                                                                  style: TextStyle(
-                                                                    color: Colors.red,
-                                                                    fontSize: 16,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-
-                                                          TextField(
-                                                            controller: rmkcontroller.C_OtherReason,
-                                                            minLines: 2,
-                                                            maxLines: 5,
-                                                            decoration: InputDecoration(
-                                                              hintText: "Enter Other Reason",
-                                                              border: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1.5,
-                                                                ),
-                                                              ),
-                                                              enabledBorder: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1,
-                                                                ),
-                                                              ),
-                                                              focusedBorder: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1.5,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    }
-
-                                                    return SizedBox();
-                                                  }),
-                                                  Obx(() {
-                                                    if (rmkcontroller.selectedChlnCategory.value == "6" &&
-                                                        rmkcontroller.selectedChlnSubCategory.value == "38") {
-                                                      return Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Padding(
-                                                            padding: EdgeInsets.only(bottom: 6, left: 4),
-                                                            child: Row(
-                                                              children: [
-                                                                Text(
-                                                                  "Other_reason".tr,
-                                                                  style: TextStyle(
-                                                                    fontSize: 16,
-                                                                    fontWeight: FontWeight.w500,
-                                                                    color: Colors.black87,
-                                                                  ),
-                                                                ),
-                                                                SizedBox(width: 4),
-                                                                Text(
-                                                                  "*",
-                                                                  style: TextStyle(
-                                                                    color: Colors.red,
-                                                                    fontSize: 16,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-
-                                                          TextField(
-                                                            controller: rmkcontroller.C_OtherReason,
-                                                            minLines: 2,
-                                                            maxLines: 5,
-                                                            decoration: InputDecoration(
-                                                              hintText: "Enter Other Reason",
-                                                              border: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1.5,
-                                                                ),
-                                                              ),
-                                                              enabledBorder: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1,
-                                                                ),
-                                                              ),
-                                                              focusedBorder: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(14),
-                                                                borderSide: BorderSide(
-                                                                  color: BrandColors.apporangeColor,
-                                                                  width: 1.5,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    }
-
-                                                    return SizedBox();
-                                                  })
+                                                  // Obx(() {
+                                                  //   if (
+                                                  //
+                                                  //   rmkcontroller.selectedChlnCategories.contains("5")
+                                                  //
+                                                  //       &&
+                                                  //
+                                                  //       rmkcontroller.selectedChlnSubCategories.contains("33")
+                                                  //
+                                                  //   ) {
+                                                  //     return Column(
+                                                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                                                  //       children: [
+                                                  //         Padding(
+                                                  //           padding: EdgeInsets.only(bottom: 6, left: 4),
+                                                  //           child: Row(
+                                                  //             children: [
+                                                  //               Text(
+                                                  //                 "Other_reason".tr,
+                                                  //                 style: TextStyle(
+                                                  //                   fontSize: 16,
+                                                  //                   fontWeight: FontWeight.w500,
+                                                  //                   color: Colors.black87,
+                                                  //                 ),
+                                                  //               ),
+                                                  //               SizedBox(width: 4),
+                                                  //               Text(
+                                                  //                 "*",
+                                                  //                 style: TextStyle(
+                                                  //                   color: Colors.red,
+                                                  //                   fontSize: 16,
+                                                  //                 ),
+                                                  //               ),
+                                                  //             ],
+                                                  //           ),
+                                                  //         ),
+                                                  //
+                                                  //         TextField(
+                                                  //           controller: rmkcontroller.C_OtherReason,
+                                                  //           minLines: 2,
+                                                  //           maxLines: 5,
+                                                  //           decoration: InputDecoration(
+                                                  //             hintText: "Enter Other Reason",
+                                                  //             border: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1.5,
+                                                  //               ),
+                                                  //             ),
+                                                  //             enabledBorder: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1,
+                                                  //               ),
+                                                  //             ),
+                                                  //             focusedBorder: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1.5,
+                                                  //               ),
+                                                  //             ),
+                                                  //           ),
+                                                  //         ),
+                                                  //       ],
+                                                  //     );
+                                                  //   }
+                                                  //
+                                                  //   return SizedBox();
+                                                  // }),
+                                                  // Obx(() {
+                                                  //   if (
+                                                  //
+                                                  //   rmkcontroller.selectedChlnCategories.contains("6")
+                                                  //
+                                                  //       &&
+                                                  //
+                                                  //       rmkcontroller.selectedChlnSubCategories.contains("38")
+                                                  //
+                                                  //   ) {
+                                                  //     return Column(
+                                                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                                                  //       children: [
+                                                  //         Padding(
+                                                  //           padding: EdgeInsets.only(bottom: 6, left: 4),
+                                                  //           child: Row(
+                                                  //             children: [
+                                                  //               Text(
+                                                  //                 "Other_reason".tr,
+                                                  //                 style: TextStyle(
+                                                  //                   fontSize: 16,
+                                                  //                   fontWeight: FontWeight.w500,
+                                                  //                   color: Colors.black87,
+                                                  //                 ),
+                                                  //               ),
+                                                  //               SizedBox(width: 4),
+                                                  //               Text(
+                                                  //                 "*",
+                                                  //                 style: TextStyle(
+                                                  //                   color: Colors.red,
+                                                  //                   fontSize: 16,
+                                                  //                 ),
+                                                  //               ),
+                                                  //             ],
+                                                  //           ),
+                                                  //         ),
+                                                  //
+                                                  //         TextField(
+                                                  //           controller: rmkcontroller.C_OtherReason,
+                                                  //           minLines: 2,
+                                                  //           maxLines: 5,
+                                                  //           decoration: InputDecoration(
+                                                  //             hintText: "Enter Other Reason",
+                                                  //             border: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1.5,
+                                                  //               ),
+                                                  //             ),
+                                                  //             enabledBorder: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1,
+                                                  //               ),
+                                                  //             ),
+                                                  //             focusedBorder: OutlineInputBorder(
+                                                  //               borderRadius: BorderRadius.circular(14),
+                                                  //               borderSide: BorderSide(
+                                                  //                 color: BrandColors.apporangeColor,
+                                                  //                 width: 1.5,
+                                                  //               ),
+                                                  //             ),
+                                                  //           ),
+                                                  //         ),
+                                                  //       ],
+                                                  //     );
+                                                  //   }
+                                                  //
+                                                  //   return SizedBox();
+                                                  // })
                                                 ],
                                               ),
                                               const SizedBox(height: 15),
@@ -2252,28 +2457,35 @@ class _RemarkState extends State<Remark> {
                                             ),
                                             onPressed: () {
 
-                                              if(rmkcontroller.selectedChlnCategory.value.isEmpty){
+                                              if (rmkcontroller.selectedChlnCategories.isEmpty) {
                                                 print("a");
                                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please fill out all fields!"),backgroundColor: Colors.redAccent,));
                                                 return;
                                               }
-                                              if(rmkcontroller.selectedChlnCategory.value == "7"){
+                                              if (rmkcontroller.selectedChlnCategories.contains("7")) {
                                                 if(rmkcontroller.C_OtherReason.text.isEmpty) {
                                                   print("b");
                                                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please fill out all fields!"), backgroundColor: Colors.redAccent,));
                                                   return;
                                                 }
                                               }
-                                              if(rmkcontroller.selectedChlnCategory.value != "7"){
-                                                if(rmkcontroller.selectedChlnSubCategory.value.isEmpty) {
+                                              if (!rmkcontroller.selectedChlnCategories.contains("7")) {
+                                                if (rmkcontroller.selectedChlnSubCategories.isEmpty) {
                                                   print("c");
                                                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please fill out all fields!"), backgroundColor: Colors.redAccent,));
                                                   return;
                                                 }
                                               }
 
-                                              if (rmkcontroller.selectedChlnCategory.value == "1" &&
-                                                  rmkcontroller.selectedChlnSubCategory.value == "6") {
+                                              if (
+
+                                              rmkcontroller.selectedChlnCategories.contains("1")
+
+                                                  &&
+
+                                                  rmkcontroller.selectedChlnSubCategories.contains("6")
+
+                                              ) {
 
 
                                                 if (rmkcontroller.C_OtherReason.text.trim().isEmpty) {
@@ -2282,8 +2494,15 @@ class _RemarkState extends State<Remark> {
                                                   return;
                                                 }
                                               }
-                                              if (rmkcontroller.selectedChlnCategory.value == "2" &&
-                                                  rmkcontroller.selectedChlnSubCategory.value == "11") {
+                                              if (
+
+                                              rmkcontroller.selectedChlnCategories.contains("2")
+
+                                                  &&
+
+                                                  rmkcontroller.selectedChlnSubCategories.contains("11")
+
+                                              ) {
 
 
                                                 if (rmkcontroller.C_OtherReason.text.trim().isEmpty) {
@@ -2292,8 +2511,15 @@ class _RemarkState extends State<Remark> {
                                                   return;
                                                 }
                                               }
-                                              if (rmkcontroller.selectedChlnCategory.value == "3" &&
-                                                  rmkcontroller.selectedChlnSubCategory.value == "19") {
+                                              if (
+
+                                              rmkcontroller.selectedChlnCategories.contains("3")
+
+                                                  &&
+
+                                                  rmkcontroller.selectedChlnSubCategories.contains("19")
+
+                                              ) {
 
 
                                                 if (rmkcontroller.C_OtherReason.text.trim().isEmpty) {
@@ -2302,8 +2528,15 @@ class _RemarkState extends State<Remark> {
                                                   return;
                                                 }
                                               }
-                                              if (rmkcontroller.selectedChlnCategory.value == "4" &&
-                                                  rmkcontroller.selectedChlnSubCategory.value == "25") {
+                                              if (
+
+                                              rmkcontroller.selectedChlnCategories.contains("4")
+
+                                                  &&
+
+                                                  rmkcontroller.selectedChlnSubCategories.contains("25")
+
+                                              ) {
 
 
                                                 if (rmkcontroller.C_OtherReason.text.trim().isEmpty) {
@@ -2312,8 +2545,15 @@ class _RemarkState extends State<Remark> {
                                                   return;
                                                 }
                                               }
-                                              if (rmkcontroller.selectedChlnCategory.value == "5" &&
-                                                  rmkcontroller.selectedChlnSubCategory.value == "33") {
+                                              if (
+
+                                              rmkcontroller.selectedChlnCategories.contains("5")
+
+                                                  &&
+
+                                                  rmkcontroller.selectedChlnSubCategories.contains("33")
+
+                                              ) {
 
 
                                                 if (rmkcontroller.C_OtherReason.text.trim().isEmpty) {
@@ -2322,8 +2562,15 @@ class _RemarkState extends State<Remark> {
                                                   return;
                                                 }
                                               }
-                                              if (rmkcontroller.selectedChlnCategory.value == "6" &&
-                                                  rmkcontroller.selectedChlnSubCategory.value == "38") {
+                                              if (
+
+                                              rmkcontroller.selectedChlnCategories.contains("6")
+
+                                                  &&
+
+                                                  rmkcontroller.selectedChlnSubCategories.contains("38")
+
+                                              ) {
 
 
                                                 if (rmkcontroller.C_OtherReason.text.trim().isEmpty) {

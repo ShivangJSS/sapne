@@ -42,6 +42,8 @@ class AspirationController extends GetxController{
   RxList<String> selectedChlnCategories = <String>[].obs;
   RxBool isSubCategoryExpanded = false.obs;
 
+
+
   RxBool isCategoryExpanded = false.obs;
   RxList<String> selectedChlnSubCategories = <String>[].obs;
   var selectedSubCategoryId = "".obs;
@@ -88,6 +90,32 @@ class AspirationController extends GetxController{
   RxList<ChallengeSubcatMaster> allChlnSubCategories = <ChallengeSubcatMaster>[].obs;
   Map<String, TextEditingController> C_OtherReasonMap = {};
   Map<String, String> selectedChlnCategoryMap = {};
+
+  final Map<String, String> otherSubCodes = {
+
+    "1": "6",
+
+    "2": "11",
+
+    "3": "19",
+
+    "4": "25",
+
+    "5": "33",
+
+    "6": "38",
+
+  };
+  bool isOtherSelectedForCategory(String catId) {
+
+    String? otherCode = otherSubCodes[catId];
+
+    if (otherCode == null) return false;
+
+    return selectedChlnSubCategories.contains(otherCode);
+
+  }
+
   RxString selected_waychln_ctgry = ''.obs;
   RxString selected_way_sbctgry = ''.obs;
   RxList<WayforCatMaster> challengeWayCategories = <WayforCatMaster>[].obs;
@@ -149,32 +177,57 @@ class AspirationController extends GetxController{
 
   void onChlnCategoryChanged(String code, bool checked) {
 
-    if (checked) {
+    // Other category selected
+    if (code == "7") {
 
-      if (!selectedChlnCategories.contains(code)) {
-        selectedChlnCategories.add(code);
+      if (checked) {
+
+        selectedChlnCategories.clear();
+
+        selectedChlnCategories.add("7");
+
       }
 
-    } else {
+      else {
 
-      selectedChlnCategories.remove(code);
+        selectedChlnCategories.remove("7");
+
+      }
 
     }
 
-<<<<<<< HEAD
-    print("selectedChlnCategories = $selectedChlnCategories");
-    print("selectedChlnCategory = ${selectedChlnCategory.value}");
+    else {
 
-=======
->>>>>>> 6ef43605bc1245d9d61babac82608f0fddd51d1b
+      // If Other already selected, don't allow others
+
+      if (selectedChlnCategories.contains("7")) {
+
+        return;
+
+      }
+
+      if (checked) {
+
+        if (!selectedChlnCategories.contains(code)) {
+
+          selectedChlnCategories.add(code);
+
+        }
+
+      }
+
+      else {
+
+        selectedChlnCategories.remove(code);
+
+      }
+
+    }
+
     loadSubCategories();
 
     update();
   }
-<<<<<<< HEAD
-=======
-
->>>>>>> 6ef43605bc1245d9d61babac82608f0fddd51d1b
   void toggleCard(String feedbackId) {
     if (expandedFeedbackIds.contains(feedbackId)) {
       expandedFeedbackIds.clear(); // agar wahi open hai to sab band
@@ -1039,17 +1092,88 @@ WHERE f.aspiration_id IS NULL''';
 
     update();
   }
-
   void onSubchlnChanged(
       String code,
       bool checked,
       ) {
 
+    // Find category of clicked subcategory
+
+    final clickedSub = allChlnSubCategories.firstWhere(
+
+          (e) => e.challenges_sub_cat_code == code,
+
+    );
+
+    final String catId = clickedSub.challenges_cat_id ?? "";
+
+    final String? otherCode = otherSubCodes[catId];
+
     if (checked) {
 
-      if (!selectedChlnSubCategories.contains(code)) {
+      // User clicked Other of THIS category
 
-        selectedChlnSubCategories.add(code);
+      if (code == otherCode) {
+
+        // Remove only subcategories of THIS category
+
+        selectedChlnSubCategories.removeWhere(
+
+              (e) {
+
+            final sub = allChlnSubCategories.firstWhere(
+
+                  (x) => x.challenges_sub_cat_code == e,
+
+            );
+
+            return
+
+              sub.challenges_cat_id == catId
+
+                  &&
+
+                  e != code;
+
+          },
+
+        );
+
+        if (!selectedChlnSubCategories.contains(code)) {
+
+          selectedChlnSubCategories.add(code);
+
+        }
+
+      }
+
+      else {
+
+        // If Other already selected in THIS category
+
+        if (
+
+        otherCode != null
+
+            &&
+
+            selectedChlnSubCategories.contains(otherCode)
+
+        ) {
+
+          return;
+
+        }
+
+        if (
+
+        !selectedChlnSubCategories.contains(code)
+
+        ) {
+
+          selectedChlnSubCategories.add(code);
+
+        }
 
       }
 
