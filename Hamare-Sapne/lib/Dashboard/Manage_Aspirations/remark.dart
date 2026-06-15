@@ -29,6 +29,7 @@ class _RemarkState extends State<Remark> {
   String name="",fatherName="",profileImage="",typeGone="";
   String SubCategoryImage ="", SubCategory ="", remarks ="", question ="", ParticipantFeedbackId ="";
   bool achievedIsActive=false,isVisible=true;
+  List<String> selectedCategories = [];
 
   @override
   void initState() {
@@ -518,10 +519,43 @@ class _RemarkState extends State<Remark> {
                                                   var remarkData = await DatabaseHelper.instance.getRemarkByFeedbackId(feedbackId,QuestionId);
 
                                                   if (remarkData != null) {
-                                                    rmkcontroller.selectedChlnCategory.value=remarkData[AddRmk.columnChallengeCat].toString();
-                                                    rmkcontroller.onChlnSubChanged(remarkData[AddRmk.columnChallengeCat].toString());
+                                                    String cats =
+                                                        remarkData[AddRmk.columnChallengeCat]
+                                                            ?.toString() ?? "";
+
+                                                    rmkcontroller.selectedChlnCategories.clear();
+
+                                                    if(cats.isNotEmpty){
+
+                                                      rmkcontroller.selectedChlnCategories
+                                                          .assignAll(
+                                                          cats.split(",")
+                                                      );
+
+                                                    }
+
+                                                    await rmkcontroller.loadSubCategories();
+
+                                                    String subs =
+                                                        remarkData[AddRmk.columnChallengeSubCat]
+                                                            ?.toString() ?? "";
+
+                                                    rmkcontroller.selectedChlnSubCategories.clear();
+
+                                                    if(subs.isNotEmpty){
+
+                                                      rmkcontroller.selectedChlnSubCategories
+                                                          .assignAll(
+                                                          subs.split(",")
+                                                      );
+
+                                                    }
+
+                                                    rmkcontroller.C_OtherReason.text =
+                                                        remarkData[AddRmk.columnOtherChallengeText]
+                                                            ?.toString() ?? "";
                                                     rmkcontroller.C_OtherReason.text=remarkData[AddRmk.columnOtherChallengeText].toString();
-                                                    rmkcontroller.selectedChlnSubCategory.value=remarkData[AddRmk.columnChallengeSubCat].toString();
+
                                                     rmkcontroller.selected_waychln_ctgry.value=remarkData[AddRmk.columnWayFrowordCat].toString();
                                                     rmkcontroller.onWayCatChanged(remarkData[AddRmk.columnWayFrowordCat].toString());
                                                     rmkcontroller.W_OtherReason.text=remarkData[AddRmk.columnOtherWayText].toString();
@@ -624,91 +658,216 @@ class _RemarkState extends State<Remark> {
                                                   ),
                                                   Obx(() => Row(
                                                     children: [
-                                                      Expanded(
-                                                        child: DropdownButtonFormField<String>(
-                                                          isExpanded: true,
-                                                          value: rmkcontroller.selectedChlnCategory.value.isNotEmpty
-                                                              ? rmkcontroller.selectedChlnCategory.value
-                                                              : null,
-                                                          dropdownColor: Colors.white,
-                                                          decoration: InputDecoration(
-                                                            hintText: "select_category".tr,
-                                                            filled: true,
-                                                            fillColor: Colors.white,
-                                                            hintStyle: TextStyle(
-                                                              color: Colors.grey[500],
-                                                              fontSize: 14,
-                                                              fontWeight: FontWeight.w500,
-                                                            ),
-                                                            contentPadding: EdgeInsets.symmetric(
-                                                              horizontal: 16,
-                                                              vertical: MediaQuery.of(context).size.height < 820
-                                                                  ? 28   // Redmi Note 5 Pro, chhote phones
-                                                                  : 26,  // bade phones
-                                                            ),                                           border: OutlineInputBorder(
-                                                            borderRadius: BorderRadius.circular(14),
-                                                            borderSide: BorderSide(color: BrandColors.apporangeColor,width: 1),
-                                                          ),
-                                                            enabledBorder: OutlineInputBorder(
-                                                              borderRadius: BorderRadius.circular(14),
-                                                              borderSide: BorderSide(color: BrandColors.apporangeColor,width: 1),
-                                                            ),
-                                                            focusedBorder: OutlineInputBorder(
-                                                              borderRadius: BorderRadius.circular(14),
-                                                              borderSide: BorderSide(
-                                                                color: BrandColors.apporangeColor,
-                                                                width: 1.5,
-                                                              ),
-                                                            ),
-                                                          ),
 
-                                                          items: rmkcontroller.challengeCategories
-                                                              .map((cat) => DropdownMenuItem<String>(
-                                                            value: cat.challenges_cat_code,
-                                                            child: SizedBox(
-                                                              width: double.infinity,
-                                                              child: SizedBox(
+                                                      Expanded(
+
+                                                        child: Column(
+
+                                                          children: [
+
+                                                            GestureDetector(
+
+                                                              onTap: () {
+
+                                                                rmkcontroller.isCategoryExpanded.toggle();
+
+                                                              },
+
+                                                              child: Container(
+
                                                                 width: double.infinity,
-                                                                child: Align(
-                                                                  alignment: Alignment.topLeft, // ⭐ text upar se start hoga
-                                                                  child: Text(
-                                                                    cat.challenges_cat_name ?? "",
-                                                                    style: const TextStyle(
-                                                                      fontSize: 16,
-                                                                      color: Colors.black87,
-                                                                    ),
-                                                                    maxLines: 2,
-                                                                    softWrap: true,
-                                                                    overflow: TextOverflow.visible,
-                                                                  ),
+
+                                                                padding: const EdgeInsets.symmetric(
+                                                                  horizontal: 16,
+                                                                  vertical: 18,
                                                                 ),
+
+                                                                decoration: BoxDecoration(
+
+                                                                  border: Border.all(
+                                                                    color: BrandColors.apporangeColor,
+                                                                  ),
+
+                                                                  borderRadius: BorderRadius.circular(14),
+
+                                                                  color: Colors.white,
+
+                                                                ),
+
+                                                                child: Row(
+
+                                                                  children: [
+
+                                                                    Expanded(
+
+                                                                      child: Text(
+
+                                                                        rmkcontroller.selectedChlnCategories.isEmpty
+
+                                                                            ?
+
+                                                                        "select_category".tr
+
+                                                                            :
+
+                                                                        rmkcontroller.challengeCategories
+
+                                                                            .where(
+
+                                                                                (cat)=>
+
+                                                                                rmkcontroller.selectedChlnCategories
+
+                                                                                    .contains(
+
+                                                                                    cat.challenges_cat_code
+
+                                                                                )
+
+                                                                        )
+
+                                                                            .map(
+
+                                                                                (cat)=>
+
+                                                                            cat.challenges_cat_name ?? ""
+
+                                                                        )
+
+                                                                            .join(", "),
+
+                                                                        maxLines: 2,
+
+                                                                        overflow: TextOverflow.ellipsis,
+
+                                                                      ),
+
+                                                                    ),
+
+                                                                    Icon(
+
+                                                                      rmkcontroller.isCategoryExpanded.value
+
+                                                                          ?
+
+                                                                      Icons.keyboard_arrow_up
+
+                                                                          :
+
+                                                                      Icons.keyboard_arrow_down,
+
+                                                                    )
+
+                                                                  ],
+
+                                                                ),
+
                                                               ),
+
                                                             ),
-                                                          ))
-                                                              .toList(),
-                                                          onChanged: (value) {rmkcontroller.onChlnSubChanged(value);
-                                                          },
+
+                                                            if(rmkcontroller.isCategoryExpanded.value)
+
+                                                              Container(
+
+                                                                margin: const EdgeInsets.only(top: 5),
+
+                                                                decoration: BoxDecoration(
+
+                                                                  color: Colors.white,
+
+                                                                  border: Border.all(
+                                                                    color: Colors.grey.shade300,
+                                                                  ),
+
+                                                                  borderRadius: BorderRadius.circular(14),
+
+                                                                ),
+
+                                                                child: Column(
+
+                                                                  children:
+
+                                                                  rmkcontroller.challengeCategories
+
+                                                                      .map((cat){
+
+                                                                    return CheckboxListTile(
+
+                                                                      dense: true,
+
+                                                                      controlAffinity:
+
+                                                                      ListTileControlAffinity.leading,
+
+                                                                      value:
+
+                                                                      rmkcontroller.selectedChlnCategories
+
+                                                                          .contains(
+
+                                                                          cat.challenges_cat_code
+
+                                                                      ),
+
+                                                                      title: Text(
+
+                                                                        cat.challenges_cat_name ?? "",
+
+                                                                      ),
+
+                                                                      onChanged: (value){
+
+                                                                        rmkcontroller.onChlnCategoryChanged(
+
+                                                                          cat.challenges_cat_code ?? "",
+
+                                                                          value ?? false,
+
+                                                                        );
+
+                                                                      },
+
+                                                                    );
+
+                                                                  }).toList(),
+
+                                                                ),
+
+                                                              )
+
+                                                          ],
+
                                                         ),
+
                                                       ),
+
                                                     ],
-                                                  )
-                                                  ),
+
+                                                  )),
                                                   const SizedBox(height: 16),
-                                                  // SubCategory Label
+
+// SubCategory Label
                                                   Padding(
                                                     padding: const EdgeInsets.only(bottom: 6, left: 4),
                                                     child: Row(
                                                       children: [
-                                                        Obx(()=>Text((rmkcontroller.selectedChlnCategory.value == "7")? "Other_reason".tr:"select_sub_category".tr,
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight: FontWeight.w500,
-                                                            color: Colors.black87,
+                                                        Obx(
+                                                              () => Text(
+                                                            rmkcontroller.selectedChlnCategories.contains("7")
+                                                                ? "Other_reason".tr
+                                                                : "select_sub_category".tr,
+                                                            style: const TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight: FontWeight.w500,
+                                                              color: Colors.black87,
+                                                            ),
                                                           ),
                                                         ),
-                                                        ),
-                                                        SizedBox(width: 4),
-                                                        Text(
+
+                                                        const SizedBox(width: 4),
+
+                                                        const Text(
                                                           "*",
                                                           style: TextStyle(
                                                             color: Colors.red,
@@ -718,8 +877,10 @@ class _RemarkState extends State<Remark> {
                                                       ],
                                                     ),
                                                   ),
+
                                                   Obx(() {
-                                                    return rmkcontroller.selectedChlnCategory.value == "7"
+                                                    return rmkcontroller.selectedChlnCategories.contains("7")
+
                                                         ? TextField(
                                                       controller: rmkcontroller.C_OtherReason,
                                                       minLines: 2,
@@ -728,109 +889,245 @@ class _RemarkState extends State<Remark> {
                                                         hintText: "Enter Other Reason",
                                                         border: OutlineInputBorder(
                                                           borderRadius: BorderRadius.circular(14),
-                                                          borderSide: BorderSide(
+                                                          borderSide: const BorderSide(
                                                             color: BrandColors.apporangeColor,
                                                             width: 1.5,
                                                           ),
                                                         ),
                                                         enabledBorder: OutlineInputBorder(
                                                           borderRadius: BorderRadius.circular(14),
-                                                          borderSide: BorderSide(color: BrandColors.apporangeColor, width: 1),
+                                                          borderSide: const BorderSide(
+                                                            color: BrandColors.apporangeColor,
+                                                            width: 1,
+                                                          ),
                                                         ),
                                                         focusedBorder: OutlineInputBorder(
                                                           borderRadius: BorderRadius.circular(14),
-                                                          borderSide: BorderSide(color: BrandColors.apporangeColor, width: 1.5),
+                                                          borderSide: const BorderSide(
+                                                            color: BrandColors.apporangeColor,
+                                                            width: 1.5,
+                                                          ),
                                                         ),
                                                       ),
                                                     )
-                                                        : SizedBox(
-                                                      // height: 49,
-                                                      child: DropdownButtonFormField<String>(
-                                                        isExpanded: true,
-                                                        // value: rmkcontroller.selectedChlnSubCategory.value.isNotEmpty
-                                                        //     ? rmkcontroller.selectedChlnSubCategory.value
-                                                        //     : null,
-                                                        value: (
-                                                            rmkcontroller.selectedChlnSubCategory.value.isNotEmpty &&
-                                                                rmkcontroller.allChlnSubCategories.any(
-                                                                        (item) =>
-                                                                    item.challenges_sub_cat_code.toString() ==
-                                                                        rmkcontroller.selectedChlnSubCategory.value
-                                                                )
-                                                        )
-                                                            ? rmkcontroller.selectedChlnSubCategory.value
-                                                            : null,
 
-                                                        dropdownColor: Colors.white,
-                                                        decoration: InputDecoration(
-                                                          hintText: "select_sub_category".tr,
-                                                          filled: true,
-                                                          fillColor: Colors.white,
-                                                          hintStyle: TextStyle(
-                                                            color: Colors.grey[500],
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.w500,
-                                                          ),
-                                                          contentPadding: EdgeInsets.symmetric(
-                                                            horizontal: 16,
-                                                            vertical: MediaQuery.of(context).size.height < 820
-                                                                ? 28   // Redmi Note 5 Pro, chhote phones
-                                                                : 26,  // bade phones
-                                                          ),
-                                                          border: OutlineInputBorder(
-                                                            borderRadius: BorderRadius.circular(14),
-                                                            borderSide: BorderSide(color: BrandColors.apporangeColor, width: 1),
-                                                          ),
-                                                          enabledBorder: OutlineInputBorder(
-                                                            borderRadius: BorderRadius.circular(14),
-                                                            borderSide: BorderSide(color: BrandColors.apporangeColor, width: 1),
-                                                          ),
-                                                          focusedBorder: OutlineInputBorder(
-                                                            borderRadius: BorderRadius.circular(14),
-                                                            borderSide: BorderSide(color: BrandColors.apporangeColor, width: 1.5),
-                                                          ),
-                                                        ),
-                                                        // items: rmkcontroller.allChlnSubCategories
-                                                        //     .map((c) => DropdownMenuItem(
-                                                        //   value: c.challenges_sub_cat_code,
-                                                        //   child: Text(
-                                                        //     c.challenges_sub_cat_name ?? "",
-                                                        //     style: const TextStyle(
-                                                        //       fontSize: 16,
-                                                        //       color: Colors.black87,
-                                                        //     ),
-                                                        //     overflow: TextOverflow.ellipsis,
-                                                        //     maxLines: 1,
-                                                        //   ),
-                                                        // ))
-                                                        //     .toList(),
-                                                        items: rmkcontroller.allChlnSubCategories
-                                                            .map((c) => DropdownMenuItem(
-                                                          value: c.challenges_sub_cat_code.toString(),
-                                                          child: SizedBox(
+                                                        : Column(
+                                                      children: [
+
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            rmkcontroller.isSubCategoryExpanded.toggle();
+                                                          },
+
+                                                          child: Container(
                                                             width: double.infinity,
-                                                            child: Align(
-                                                              alignment: Alignment.topLeft, // ⭐ text upar se start hoga
-                                                              child: Text(
-                                                                c.challenges_sub_cat_name ?? "",
-                                                                style: const TextStyle(
-                                                                  fontSize: 16,
-                                                                  color: Colors.black87,
-                                                                ),
-                                                                maxLines: 2,
-                                                                softWrap: true,
-                                                                overflow: TextOverflow.visible,
+
+                                                            padding: const EdgeInsets.symmetric(
+                                                              horizontal: 16,
+                                                              vertical: 18,
+                                                            ),
+
+                                                            decoration: BoxDecoration(
+                                                              border: Border.all(
+                                                                color: BrandColors.apporangeColor,
                                                               ),
+
+                                                              borderRadius: BorderRadius.circular(14),
+
+                                                              color: Colors.white,
+                                                            ),
+
+                                                            child: Row(
+                                                              children: [
+
+                                                                Expanded(
+                                                                  child: Text(
+                                                                    rmkcontroller.selectedChlnSubCategories.isEmpty
+                                                                        ? "select_sub_category".tr
+                                                                        : rmkcontroller.allChlnSubCategories
+                                                                        .where(
+                                                                          (sub) => rmkcontroller
+                                                                          .selectedChlnSubCategories
+                                                                          .contains(
+                                                                        sub.challenges_sub_cat_code,
+                                                                      ),
+                                                                    )
+                                                                        .map(
+                                                                          (sub) =>
+                                                                      sub.challenges_sub_cat_name ?? "",
+                                                                    )
+                                                                        .join(", "),
+
+                                                                    maxLines: 2,
+                                                                    overflow: TextOverflow.ellipsis,
+                                                                  ),
+                                                                ),
+
+                                                                Icon(
+                                                                  rmkcontroller.isSubCategoryExpanded.value
+                                                                      ? Icons.keyboard_arrow_up
+                                                                      : Icons.keyboard_arrow_down,
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
-                                                        ))
-                                                            .toList(),
+                                                        ),
 
-                                                        onChanged: rmkcontroller.onSubchlnChanged,
-                                                      ),
+                                                        if (rmkcontroller.isSubCategoryExpanded.value)
+                                                          Container(
+                                                            margin: const EdgeInsets.only(top: 5),
+
+                                                            decoration: BoxDecoration(
+                                                              color: Colors.white,
+
+                                                              border: Border.all(
+                                                                color: Colors.grey.shade300,
+                                                              ),
+
+                                                              borderRadius: BorderRadius.circular(14),
+                                                            ),
+
+                                                            child: Column(
+
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+
+                                                              children:
+
+                                                              rmkcontroller.selectedChlnCategories
+
+                                                                  .map((catCode) {
+
+                                                                final cat =
+
+                                                                rmkcontroller.challengeCategories.firstWhere(
+
+                                                                      (e) =>
+
+                                                                  e.challenges_cat_code == catCode,
+
+                                                                );
+
+                                                                final subs =
+
+                                                                rmkcontroller.allChlnSubCategories
+
+                                                                    .where(
+
+                                                                      (e) =>
+
+                                                                  e.challenges_cat_id == catCode,
+
+                                                                )
+
+                                                                    .toList();
+
+                                                                return Column(
+
+                                                                  crossAxisAlignment:
+
+                                                                  CrossAxisAlignment.start,
+
+                                                                  children: [
+
+                                                                    Padding(
+
+                                                                      padding:
+
+                                                                      const EdgeInsets.only(
+
+                                                                        left: 16,
+
+                                                                        top: 12,
+
+                                                                        bottom: 5,
+
+                                                                      ),
+
+                                                                      child: Text(
+
+                                                                        cat.challenges_cat_name ?? "",
+
+                                                                        style:
+
+                                                                        const TextStyle(
+
+                                                                          fontWeight:
+
+                                                                          FontWeight.bold,
+
+                                                                          fontSize: 16,
+
+                                                                        ),
+
+                                                                      ),
+
+                                                                    ),
+
+                                                                    ...subs.map(
+
+                                                                          (sub) {
+
+                                                                        return CheckboxListTile(
+
+                                                                          dense: true,
+
+                                                                          controlAffinity:
+
+                                                                          ListTileControlAffinity.leading,
+
+                                                                          value:
+
+                                                                          rmkcontroller
+
+                                                                              .selectedChlnSubCategories
+
+                                                                              .contains(
+
+                                                                            sub.challenges_sub_cat_code,
+
+                                                                          ),
+
+                                                                          title: Text(
+
+                                                                            sub.challenges_sub_cat_name
+
+                                                                                ?? "",
+
+                                                                          ),
+
+                                                                          onChanged: (value) {
+
+                                                                            rmkcontroller
+
+                                                                                .onSubchlnChanged(
+
+                                                                              sub.challenges_sub_cat_code
+
+                                                                                  ?? "",
+
+                                                                              value ?? false,
+
+                                                                            );
+
+                                                                          },
+
+                                                                        );
+
+                                                                      },
+
+                                                                    )
+
+                                                                  ],
+
+                                                                );
+
+                                                              }).toList(),
+
+                                                            ),
+                                                          ),
+                                                      ],
                                                     );
                                                   }),
-
 
                                                   const SizedBox(height: 15),
 
@@ -861,7 +1158,7 @@ class _RemarkState extends State<Remark> {
                                                                   ),
                                                                 ),
                                                               ],
-                                                            ),
+                                                            )
                                                           ),
 
                                                           TextField(
