@@ -38,8 +38,11 @@ class AspirationController extends GetxController{
   RxList<String> selectedCategories = <String>[].obs;
   RxList<String> selectedWayCategories = <String>[].obs;
   RxList<String> selectedWaySubCategories = <String>[].obs;
-
   RxList<String> selectedSubCategories = <String>[].obs;
+  RxList<String> selectedChlnCategories = <String>[].obs;
+  RxBool isSubCategoryExpanded = false.obs;
+
+  RxBool isCategoryExpanded = false.obs;
   RxList<String> selectedChlnSubCategories = <String>[].obs;
   var selectedSubCategoryId = "".obs;
   final myTimer = SimpleTimer();
@@ -102,8 +105,16 @@ class AspirationController extends GetxController{
   // }
   void clearRemarkFields() {
     selectedChlnCategory.value = "";
-    // selectedChlnSubCategory.value = "";
-    selectedChlnSubCategories.value.clear();
+
+    selectedChlnCategories.clear();
+
+    selectedChlnSubCategory.value = "";
+
+    selectedChlnSubCategories.clear();
+
+    allChlnSubCategories.clear();
+
+    C_OtherReason.clear();
     C_OtherReason.clear();
 
     selected_waychln_ctgry.value = "";
@@ -135,6 +146,28 @@ class AspirationController extends GetxController{
 
     allWaySubCategories.assignAll(res);
   }
+
+  void onChlnCategoryChanged(String code, bool checked) {
+
+    if (checked) {
+
+      if (!selectedChlnCategories.contains(code)) {
+        selectedChlnCategories.add(code);
+      }
+
+    } else {
+
+      selectedChlnCategories.remove(code);
+
+    }
+
+    print("selectedChlnCategories = $selectedChlnCategories");
+    print("selectedChlnCategory = ${selectedChlnCategory.value}");
+
+    loadSubCategories();
+
+    update();
+  }
   void toggleCard(String feedbackId) {
     if (expandedFeedbackIds.contains(feedbackId)) {
       expandedFeedbackIds.clear(); // agar wahi open hai to sab band
@@ -144,6 +177,8 @@ class AspirationController extends GetxController{
         ..add(feedbackId); // phir sirf current open karo
     }
   }
+
+
 
 
   bool isExpanded(String feedbackId) {
@@ -967,12 +1002,14 @@ WHERE f.aspiration_id IS NULL''';
     selectedChlnSubCategories.clear();
 
 
-    if (selectedCategories.isEmpty) {
+    if (selectedChlnCategories.isEmpty) {
       update();
       return;
     }
 
-    String ids = selectedCategories.map((e) => "'$e'").join(",");
+    String ids = selectedChlnCategories
+        .map((e) => "'$e'")
+        .join(",");
 
     String query = """
     SELECT *
@@ -995,24 +1032,33 @@ WHERE f.aspiration_id IS NULL''';
 
     update();
   }
-  // challenge
-  void onChlnSubChanged(String? catId) async{
-    selectedChlnCategory.value = catId ?? '';
-    // selectedChlnSubCategory.value = '';
-    selectedChlnSubCategories.value.clear();
-    C_OtherReason.clear();
 
-    // print("category = $catId");
-    // print("language = $languageId");
-    String qry1 = "Select * from challenge_sub_cat_master where challenges_cat_id = '$catId' and lang_id=$languageId";
-    List<ChallengeSubcatMaster> res1 = await DatabaseHelper.instance.SelectData(qry1, (map) => ChallengeSubcatMaster.fromMap(map),);
-    allChlnSubCategories.assignAll(res1);
+  void onSubchlnChanged(
+      String code,
+      bool checked,
+      ) {
+
+    if (checked) {
+
+      if (!selectedChlnSubCategories.contains(code)) {
+
+        selectedChlnSubCategories.add(code);
+
+      }
+
+    }
+
+    else {
+
+      selectedChlnSubCategories.remove(code);
+
+    }
+
     update();
+
   }
 
-  void onSubchlnChanged(String? subId) {
-    selectedChlnSubCategory.value = subId ?? '';
-  }
+
   // Way Forword
   void onWayCatChanged(String? catId) async {
     print("subcategory= $catId");
@@ -1039,25 +1085,42 @@ WHERE f.aspiration_id IS NULL''';
     bool result = await InternetConnectionChecker().hasConnection;
     try{
       List<AddRmk> dataList = [];
-     final data = AddRmk(
-       feedback_id: fId,
-       question_id: QId,
-       coachId:coachId,
-       participantId:participantId,
-       challengeCat: selectedChlnCategory.value.toString(),
-       challengeSubCat: (selectedChlnCategory.value.toString() == "8") ? null : selectedChlnSubCategory.value,
-       other_challenge_text: C_OtherReason.text.trim().toString() ?? '',
-       wayforwardCat: selected_waychln_ctgry.value,
-       wayforwardSubCat: selected_waychln_ctgry.value.toString()=="8" ? null : selected_way_sbctgry.value,
-       other_wayforward_sub_cat_text: W_OtherReason.text.trim().toString() ?? '',
-       latitude: latitude,
-       longitude: longitude,
-       mobileVersion: osVersion,
-       deviceName: deviceName,
-       appVersion: appVersion,
-             created_at: DateTime.now().toString(),
-       status: "1"
-     );
+      final data = AddRmk(
+        feedback_id: fId,
+        question_id: QId,
+
+        coachId: coachId,
+        participantId: participantId,
+
+        // Multi-select categories
+        challengeCat: selectedChlnCategories.join(","),
+
+        // If category 7 ("Other") is selected, don't save subcategories
+        challengeSubCat: selectedChlnCategories.contains("7")
+            ? null
+            : selectedChlnSubCategories.join(","),
+
+        other_challenge_text: C_OtherReason.text.trim(),
+
+        wayforwardCat: selected_waychln_ctgry.value,
+
+        wayforwardSubCat: selected_waychln_ctgry.value == "8"
+            ? null
+            : selected_way_sbctgry.value,
+
+        other_wayforward_sub_cat_text: W_OtherReason.text.trim(),
+
+        latitude: latitude,
+        longitude: longitude,
+
+        mobileVersion: osVersion,
+        deviceName: deviceName,
+        appVersion: appVersion,
+
+        created_at: DateTime.now().toString(),
+
+        status: "1",
+      );
      // print(jsonEncode(data.toJson()));
      if(result){
         var response = await dio.post(Api.BaseUrl+Api.AddRemark, data: data.toJson(), );
@@ -1085,8 +1148,16 @@ WHERE f.aspiration_id IS NULL''';
        await DatabaseHelper.instance.insertData(offlineRemark, 'remark');
        SmartDialog.showToast(" Data has been saved locally");
      }
-     selectedChlnCategory.value = "";
-     selectedChlnSubCategory.value = "";
+      selectedChlnCategory.value = "";
+      selectedChlnSubCategory.value = "";
+
+      selectedChlnCategories.clear();
+      selectedChlnSubCategories.clear();
+
+      allChlnSubCategories.clear();
+
+      isCategoryExpanded.value = false;
+      isSubCategoryExpanded.value = false;
      selected_waychln_ctgry.value = "";
      selected_way_sbctgry.value = "";
      C_OtherReason.text = "";
